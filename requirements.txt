@@ -2,6 +2,6 @@ holidays
 numpy
 pandas
 plotly
-sklearn
+scikit-learn
 streamlit
 xgboost
