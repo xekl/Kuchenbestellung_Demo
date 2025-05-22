@@ -60,7 +60,8 @@ def get_heuristic_prediction(data, tomorrow, language, k=4):
     """
 
     # Filter data for the same weekday as tomorrow
-    weekday_data = data[data["dayofweek"] == tomorrow["dayofweek"]]
+    tomorrow_dayofweek = get_localized_string(tomorrow["dayofweek"], "Deutsch") # data entries default to german daysofweek
+    weekday_data = data[data["dayofweek"] == tomorrow_dayofweek]
     
     # Take the last k same weekdays
     reference_days = weekday_data.sort_values(by="date").tail(k)
