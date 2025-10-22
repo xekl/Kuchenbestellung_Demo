@@ -128,6 +128,7 @@ def get_knn_prediction(data, tomorrow, language, k=4):
 
     # Retrieve reference days = the k nearest neighbors
     neighbors_indices = knn_model.kneighbors(X_tomorrow, return_distance=False)[0]
+    print("neighbors_indices", neighbors_indices)
     reference_days = data.iloc[neighbors_indices]
 
     # Build explanation
