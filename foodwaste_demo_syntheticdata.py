@@ -202,8 +202,8 @@ def generate_tomorrow(data_history, language):
         if events_count == 0:
             if np.random.rand() < .8:
                 force_event = True 
-    print("events_count", events_count)
-    print("force_event", force_event)
+    #print("events_count", events_count)
+    #print("force_event", force_event)
             
     tomorrow_sales, unexpected = get_sales(tomorrow_date, data_history, tomorrow_temperature, tomorrow_weather, tomorrow_holiday, language, force_event)
     
