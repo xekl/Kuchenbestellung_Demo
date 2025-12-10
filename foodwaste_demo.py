@@ -18,13 +18,15 @@ from foodwaste_demo_syntheticdata import *
 
 if "language" not in st.session_state:
     st.session_state.language = "Deutsch"
-
 # more on language in foodwaste_demo_strings.py
 
 if "show_history" not in st.session_state:
     st.session_state.show_history = False
 if "show_info" not in st.session_state:
     st.session_state.show_info = False
+
+if "budget" not in st.session_state:
+    st.session_state.budget = 2000  # starting budget
 
 # AI preparations
 # ---- ------- ---- ------- ---- ------- ---- ------- ---- ------- ---- ------- ---- -------
@@ -72,6 +74,11 @@ st.sidebar.write("## ⚙️")
 st.session_state.language = st.sidebar.radio("Sprache / Language", ["Deutsch", "English"])
 st.session_state.show_history = st.sidebar.toggle(get_localized_string("showhistory", st.session_state.language), value=st.session_state.show_history)
 st.session_state.show_info = st.sidebar.toggle(get_localized_string("showinfo", st.session_state.language), value=st.session_state.show_info)
+
+# Budget Tracking 
+st.sidebar.write("---")
+st.sidebar.metric("Budget", f"€{st.session_state.budget:,.2f}")
+st.sidebar.caption(get_localized_string("budgetExplanation", st.session_state.language))
 
 # Oh, and show the logo
 # st.sidebar.write("")
@@ -233,6 +240,12 @@ with ordering_col:
         current_day["missed"] = missed
         new_row = pd.DataFrame(current_day, index=[st.session_state.data.index[-1] + 1])
         st.session_state.data = pd.concat([st.session_state.data, new_row])
+
+        # Update Budget according to order 
+        cost_of_order = ordered_cakes * 2  # €2 per cake
+        cakes_sold = ordered_cakes - leftover
+        revenue_from_sales = cakes_sold * 5  # €5 per cake
+        st.session_state.budget += revenue_from_sales - cost_of_order
 
         # Generate a new tomorrow
         st.session_state.tomorrow_info = generate_tomorrow(st.session_state.data, st.session_state.language)
