@@ -78,7 +78,7 @@ st.session_state.show_info = st.sidebar.toggle(get_localized_string("showinfo", 
 # Budget Tracking 
 st.sidebar.write("---")
 st.sidebar.metric("Budget", f"€{st.session_state.budget:,.2f}")
-st.sidebar.caption(get_localized_string("budgetExplanation", st.session_state.language))
+st.sidebar.write(get_localized_string("budgetExplanation", st.session_state.language))
 
 # Oh, and show the logo
 # st.sidebar.write("")
@@ -244,7 +244,7 @@ with ordering_col:
         # Update Budget according to order 
         cost_of_order = ordered_cakes * 2  # €2 per cake
         cakes_sold = ordered_cakes - leftover
-        revenue_from_sales = cakes_sold * 5  # €5 per cake
+        revenue_from_sales = cakes_sold * 3  # €3 per cake
         st.session_state.budget += revenue_from_sales - cost_of_order
 
         # Generate a new tomorrow
