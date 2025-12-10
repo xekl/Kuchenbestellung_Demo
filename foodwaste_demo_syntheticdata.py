@@ -73,13 +73,14 @@ def get_weather(date, history):
     
     return temperature, weather
 
-def get_sales(date, history, temperature, weather, is_holiday, language):
+def get_sales(date, history, temperature, weather, is_holiday, language, force_event=False):
     """Given a date and some history, derives realistic-ish sales for that day.
     :param date: The date for which to get sales.
     :param history: All history before the date, in a pd.DataFrame with at leat columns: date, sales, temperature, weather.
     :param temperature: Temperature for date.
     :param weather: Weather for date.
     :param is_holiday: Type of the day: 'normal' or '(day before/after) holiday name'.
+    :param force_event: If True, force an unforeseen event for this day
     :return: sales as int (amount of cakes)
     """
 
@@ -131,8 +132,9 @@ def get_sales(date, history, temperature, weather, is_holiday, language):
         (get_localized_string("unexpEventSportsBad", language), 0.75),
         (get_localized_string("unexpEventBirthday", language), 1.15),
     ]
-    
-    if np.random.rand() < 0.03: # 3% chance for unexpected events
+
+    chance = 0.03 # 3% chance for unexpected events in general 
+    if np.random.rand() < chance or force_event == True: 
         event, event_modifier = unforeseen_events[np.random.randint(len(unforeseen_events))]
         base_sales *= event_modifier
     
@@ -148,7 +150,7 @@ def generate_synthetic_data(start_date, end_date, language):
     :return: A pandas DataFrame with synthetic data.
     """
 
-    np.random.seed(42)
+    np.random.seed(42) # make sure today's demo is the same for everyone
     
     # Prepare to store data
     columns = ["date", "dayofweek", "order", "sales", "leftover", "missed", "weather", "temperature", "daytype", "unexpected"]
@@ -188,10 +190,23 @@ def generate_synthetic_data(start_date, end_date, language):
     return pd.DataFrame(data, columns=columns)
 
 def generate_tomorrow(data_history, language):
+    
     tomorrow_date = data_history["date"].iloc[-1] + timedelta(days=1)
     tomorrow_temperature, tomorrow_weather = get_weather(tomorrow_date, data_history)
     tomorrow_holiday = get_holiday(tomorrow_date)
-    tomorrow_sales, unexpected = get_sales(tomorrow_date, data_history, tomorrow_temperature, tomorrow_weather, tomorrow_holiday, language)
+    
+    # make sure to have at least one almost guaranteed unexpected event in the first few days
+    force_event = False
+    events_count = data_history[data_history["unexpected"] != ""].iloc[:-10].shape[0]
+    if (tomorrow_date > datetime.today() + timedelta(days=2)) and (tomorrow_date < datetime.today() + timedelta(days=14)):
+        if events_count == 0:
+            if np.random.rand() < .8:
+                force_event = True 
+    print("events_count", events_count)
+    print("force_event", force_event)
+            
+    tomorrow_sales, unexpected = get_sales(tomorrow_date, data_history, tomorrow_temperature, tomorrow_weather, tomorrow_holiday, language, force_event)
+    
     return {
         "date": tomorrow_date, 
         "dayofweek": get_localized_string(tomorrow_date.strftime("%A"), language), 
