@@ -64,6 +64,7 @@ def get_localized_string(text, lang="Deutsch"):
         "modelKNN": {"Deutsch": "KNN", "English": "KNN"},
         "modelXGB": {"Deutsch": "XGBoost", "English": "XGBoost"},
         "explainButton": {"Deutsch": "Erklärung anzeigen", "English": "Show explanation"},    
+        "budgetExplanation": {"Deutsch": "Kuchen kosten bei der Bestellung 2€ und lassen sich für 5€ verkaufen", "English": "Cakes cost €2 and sell for €5"},    
 
         # data fields 
         "sales": {"Deutsch": "Verkauft", "English": "Sold"},
